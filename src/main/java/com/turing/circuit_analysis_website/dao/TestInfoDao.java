@@ -1,9 +1,8 @@
 package com.turing.circuit_analysis_website.dao;
 
-import com.turing.circuit_analysis_website.pojo.Chapter;
-import com.turing.circuit_analysis_website.pojo.TestInfo;
-import com.turing.circuit_analysis_website.pojo.TestSet;
-import com.turing.circuit_analysis_website.pojo.User;
+import com.turing.circuit_analysis_website.pojo.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -18,4 +17,5 @@ public interface TestInfoDao extends JpaRepository<TestInfo, Long>, PagingAndSor
     List<TestInfo> findByChapter(Chapter chapter);
     List<TestInfo> findByChapterAndUser(Chapter chapter, User user);
     List<TestInfo> findByUser(User user);
+    Page<TestInfo> findAll(Pageable pageable);
 }

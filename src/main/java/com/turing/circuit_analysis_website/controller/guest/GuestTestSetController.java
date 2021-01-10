@@ -52,18 +52,6 @@ public class GuestTestSetController {
     public JsonResult findByCId(Long id) {
         List<TestSetDto> testSets = testSetService.findByChapter(id,10);
 
-//        List<TestSetDto> tem1=new LinkedList<>();
-//        List<TestSetDto> tem2=new LinkedList<>();
-//        for(TestSetDto testSetDto:testSets){
-//            switch (testSetDto.getType()){
-//                case 1:
-//                    tem1.add(testSetDto);
-//                    break;
-//                case 2:
-//                    tem2.add(testSetDto);
-//                    break;
-//            }
-//        }
         return JsonResult.success()
                 .addObject("tem1", testSets);
     }

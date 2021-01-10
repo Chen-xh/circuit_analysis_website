@@ -32,7 +32,6 @@ public class TestSetVo implements Serializable {
     @NotNull(message = "问题不能为空")
     @Size(max = 500,message = "字数太多")
     private String question;
-    private String img_urls;
     private String options;
     @NotNull(message = "答案不能为空")
     private String answer;

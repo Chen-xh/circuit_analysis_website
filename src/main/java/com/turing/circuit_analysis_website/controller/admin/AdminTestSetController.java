@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -45,12 +46,11 @@ public class AdminTestSetController {
             @ApiImplicitParam(name = "question", value = "题目内容", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "type", value = "题目类型", required = true, paramType = "query", dataType = "int"),
             @ApiImplicitParam(name = "options", value = "选项", paramType = "query", dataType = "String"),
-            @ApiImplicitParam(name = "img_urls", value = "图片", paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "answer", value = "答案", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "CId", value = "课程章节id", required = true, paramType = "query", dataType = "int"),
     })
-    public JsonResult add(@Valid TestSetVo testSetVo) {
-        testSetService.add(testSetVo);
+    public JsonResult add(@Valid TestSetVo testSetVo, MultipartFile file) {
+        testSetService.add(testSetVo,file);
         return JsonResult.success();
     }
 
@@ -61,12 +61,12 @@ public class AdminTestSetController {
             @ApiImplicitParam(name = "question", value = "题目内容", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "type", value = "题目类型", required = true, paramType = "query", dataType = "int"),
             @ApiImplicitParam(name = "options", value = "选项", paramType = "query", dataType = "String"),
-            @ApiImplicitParam(name = "img_urls", value = "图片", paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "answer", value = "答案", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "CId", value = "课程章节id", required = true, paramType = "query", dataType = "int"),
+            @ApiImplicitParam(name = "file", value = "图片可以没有", paramType = "form", dataType = "__file")
     })
-    public JsonResult update(@Valid TestSetVo testSetVo) {
-        testSetService.update(testSetVo);
+    public JsonResult update(@Valid TestSetVo testSetVo, MultipartFile file) {
+        testSetService.update(testSetVo,file);
         return JsonResult.success();
     }
 

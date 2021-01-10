@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,13 +25,17 @@ import java.util.List;
 public class AdminTestInfoController {
     @Autowired
     TestInfoService testInfoService;
-    @ApiOperation(value = "查询所有测试记录", notes = "", httpMethod = "GET")
+
+    @ApiOperation(value = "分页查询所有测试记录", notes = "", httpMethod = "GET")
     @GetMapping(value = "/findAll")
-    public JsonResult findAll() {
-        List<TestInfo> testInfos = testInfoService.findAll();
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码，0开始", required = true, paramType = "query", dataType = "int"),
+            @ApiImplicitParam(name = "size", value = "一页多少条", required = true, paramType = "query", dataType = "int")
+    })
+    public JsonResult findAll(int size, int page) {
+        Page<TestInfo> testInfos = testInfoService.findAll(size,page);
         return JsonResult.success().addObject("testInfo", testInfos);
     }
-
     @ApiOperation(value = "根据id查询测试记录", notes = "", httpMethod = "GET")
     @GetMapping("/{id}")
     @ApiImplicitParams({

@@ -69,9 +69,15 @@ public class GuestResourcesController {
             "6.list:首页图片流水\n" +
             "7.figure:形象照\n" +
             "8.exp:实验指导书\n" +
-            "9.construction:建设成果\n" +
+            "9.construction:建设成果(png)\n" +
+            "9.1.construction2:建设成果(pdf)\n"+
             "10.achievements:教学成果\n" +
-            "11.null:未知分类" , httpMethod = "GET")
+            "11.null:未知分类\n"+
+            "12.LessonPlans:课程教案\n"+
+            "13.teacher:教师简介带形象照\n"+
+            "14.conditions:教学条件\n"+
+            "15.history:历史沿革\n"+
+            "16.title:首页顶部图片", httpMethod = "GET")
     @GetMapping(value = "/findByType")
     public JsonResult findByType(String type) {
         List<Resources> list = resourcesService.findAllByType(type);

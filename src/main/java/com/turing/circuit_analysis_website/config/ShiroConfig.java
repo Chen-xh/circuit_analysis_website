@@ -60,7 +60,7 @@ public class ShiroConfig {
         // 拦截接口
 //        filterChainDefinitionMap.put("/admin/user/**", "jwt,Roles[admin,student]");这个必须同时admin和student才能访问
 //        filterChainDefinitionMap.put("/admin/user/**", "jwt,anyRole[admin,student]");
-        filterChainDefinitionMap.put("/admin/user/**", "jwt,anyRole[admin]");
+//        filterChainDefinitionMap.put("/admin/user/**", "jwt,anyRole[admin]");
         filterChainDefinitionMap.put("/admin/**", "jwt");
 
 

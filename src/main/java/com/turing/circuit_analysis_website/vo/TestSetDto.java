@@ -28,5 +28,5 @@ public class TestSetDto implements Serializable {
     private String[] img_urls;
     private String[] options;
     private String[] answer;
-
+    private Long cId;
 }

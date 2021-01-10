@@ -4,6 +4,7 @@ import com.turing.circuit_analysis_website.dao.RoleDao;
 import com.turing.circuit_analysis_website.dao.UserDao;
 import com.turing.circuit_analysis_website.pojo.Role;
 import com.turing.circuit_analysis_website.util.MD5Util;
+import com.turing.circuit_analysis_website.vo.UserAdminVo;
 import com.turing.circuit_analysis_website.vo.UserVo;
 import com.turing.circuit_analysis_website.enums.MyCustomizeErrorCode;
 import com.turing.circuit_analysis_website.exception.CustomizeRuntimeException;
@@ -57,6 +58,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void add(UserAdminVo user, Long role_id) {
+        User tem = userDao.findUserByUsername(user.getUsername());
+        if (tem != null) {
+            throw new CustomizeRuntimeException(MyCustomizeErrorCode.USER_HAVE_EXISTENCE);
+        }
+        if (role_id == null) {
+            throw new CustomizeRuntimeException(MyCustomizeErrorCode.NOT_FOND_ROLE);
+        }
+        Role role = roleDao.findByRid(role_id);
+        if (role == null) {
+            throw new CustomizeRuntimeException(MyCustomizeErrorCode.NOT_FOND_ROLE);
+        }
+
+        User newOne = new User();
+        newOne.setPassword(MD5Util.getHexPassword(user.getPassword()));
+        newOne.setUsername(user.getUsername());
+        newOne.setCollege(user.getCollege());
+        newOne.setGender(user.getGender());
+        newOne.setMajor(user.getMajor());
+        newOne.setUser_class(user.getUser_class());
+        newOne.setName(user.getName());
+        List<Role> roles = new LinkedList<>();
+        roles.add(role);
+        newOne.setRoles(roles);
+        userDao.saveAndFlush(newOne);
+    }
+
+    @Override
     public void add(UserVo user, Long role_id) {
         User tem = userDao.findUserByUsername(user.getUsername());
         if (tem != null) {
@@ -83,6 +112,44 @@ public class UserServiceImpl implements UserService {
         newOne.setRoles(roles);
         userDao.saveAndFlush(newOne);
 
+    }
+
+    @Override
+    public void update(UserAdminVo user, Long role_id) {
+        if (user.getId() == 0L) {
+            throw new CustomizeRuntimeException(MyCustomizeErrorCode.ROOT_ADMIN_CANT_NOT_CHANGE);
+        }
+        User tem = userDao.findUserByUserId(user.getId());
+        if (tem == null) {
+            throw new CustomizeRuntimeException(MyCustomizeErrorCode.NOT_FOND_USER);
+        }
+        if(!user.getUsername().equals(tem.getUsername())) {//判重复
+            User tem2 = userDao.findUserByUsername(user.getUsername());
+            if (tem2 != null) {
+                throw new CustomizeRuntimeException(MyCustomizeErrorCode.USER_HAVE_EXISTENCE);
+            }
+        }
+        if (role_id != null) {
+            Role role = roleDao.findByRid(role_id);
+            if (role == null) {
+                throw new CustomizeRuntimeException(MyCustomizeErrorCode.NOT_FOND_ROLE);
+            }
+            List<Role> roles = new LinkedList<>();
+            roles.add(role);
+            tem.setRoles(roles);
+        }
+        //密码不为空更新密码
+        if(user.getPassword()!=null&&user.getPassword().length()>0){
+            tem.setPassword(MD5Util.getHexPassword(user.getPassword()));
+        }
+        tem.setUsername(user.getUsername());
+        tem.setCollege(user.getCollege());
+        tem.setGender(user.getGender());
+        tem.setMajor(user.getMajor());
+        tem.setUser_class(user.getUser_class());
+        tem.setName(user.getName());
+
+        userDao.saveAndFlush(tem);
     }
 
     @Override

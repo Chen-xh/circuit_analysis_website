@@ -12,6 +12,9 @@ import com.turing.circuit_analysis_website.pojo.User;
 import com.turing.circuit_analysis_website.service.TestInfoService;
 import com.turing.circuit_analysis_website.util.TestCommitResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -35,9 +38,11 @@ public class TestInfoServiceImpl implements TestInfoService {
     UserDao userDao;
 
     @Override
-    public List<TestInfo> findAll() {
-        List<TestInfo> testInfos = TestInfoDao.findAll();
-        if (testInfos == null || testInfos.size() <= 0) {
+    public Page<TestInfo> findAll(int size, int page) {
+        Pageable pageable= PageRequest.of(page, size);
+        Page<TestInfo> testInfos = TestInfoDao.findAll(pageable);
+        testInfos.getContent();
+        if (testInfos.getContent().size() <= 0) {
             throw new CustomizeRuntimeException(MyCustomizeErrorCode.NOT_FOND_TEST_INFO);
         }
 

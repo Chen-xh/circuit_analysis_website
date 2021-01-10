@@ -1,12 +1,9 @@
 package com.turing.circuit_analysis_website.controller.admin;
 
-import com.turing.circuit_analysis_website.pojo.Comment;
 import com.turing.circuit_analysis_website.pojo.User;
-import com.turing.circuit_analysis_website.service.CommentService;
 import com.turing.circuit_analysis_website.service.UserService;
-import com.turing.circuit_analysis_website.service.impl.UserServiceImpl;
 import com.turing.circuit_analysis_website.util.JsonResult;
-import com.turing.circuit_analysis_website.vo.CommentVo;
+import com.turing.circuit_analysis_website.vo.UserAdminVo;
 import com.turing.circuit_analysis_website.vo.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -16,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author CHEN
@@ -25,7 +23,6 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/admin/user/")
 @CrossOrigin(value = "*", maxAge = 3600, allowCredentials = "true")
-
 public class AdminUserController {
     @Autowired
     UserService userService;
@@ -39,16 +36,25 @@ public class AdminUserController {
         User user=userService.getUserById(id);
         return JsonResult.success().addObject("user",user);
     }
+    @ApiOperation(value = "查询所有信息",notes = "",httpMethod = "GET")
+    @GetMapping("/findAll")
+    @ApiImplicitParams({
+    })
+    public JsonResult findAll() {
+        List<User> user=userService.findAll();
+        return JsonResult.success().addObject("user",user);
+    }
+
     @ApiOperation(value = "添加", notes = "", httpMethod = "POST")
     @PostMapping(value = "/add")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "username", value = "用户名（2-16）", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "username", value = "用户名（6-12）", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "password", value = "密码（3-16）", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "rId", value = "角色的id(1 admin,2 student 3 teacher)", required = true, paramType = "query", dataType = "int"),
     })
-    public JsonResult add(@Valid UserVo userVo, Long rId) {
+    public JsonResult add(@Valid UserAdminVo userAdminVo, Long rId) {
 
-        userService.add(userVo, rId);
+        userService.add(userAdminVo, rId);
 
         return JsonResult.success();
     }
@@ -57,13 +63,13 @@ public class AdminUserController {
     @PostMapping(value = "/update")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "角色id", required = true, paramType = "query", dataType = "int"),
-            @ApiImplicitParam(name = "username", value = "用户名（2-16）", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "username", value = "用户名（6-12）", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "password", value = "密码（3-16）,可以不改", paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "rId", value = "角色的id,可以不改",  paramType = "query", dataType = "int"),
     })
-    public JsonResult update(@Valid UserVo userVo, Long rId) {
+    public JsonResult update(@Valid UserAdminVo userAdminVo, Long rId) {
 
-        userService.update(userVo,rId);
+        userService.update(userAdminVo,rId);
         return JsonResult.success();
     }
 

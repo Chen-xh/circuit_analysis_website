@@ -8,11 +8,13 @@ import com.turing.circuit_analysis_website.exception.CustomizeRuntimeException;
 import com.turing.circuit_analysis_website.pojo.Chapter;
 import com.turing.circuit_analysis_website.pojo.TestSet;
 import com.turing.circuit_analysis_website.service.TestSetService;
+import com.turing.circuit_analysis_website.util.FileUploadUtil;
 import com.turing.circuit_analysis_website.util.TestCommitResponse;
 import com.turing.circuit_analysis_website.vo.TestSetDto;
 import com.turing.circuit_analysis_website.vo.TestSetVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -32,6 +34,8 @@ public class TestSetServiceImpl implements TestSetService {
 
     @Autowired
     ChapterDao chapterDao;
+    @Autowired
+    FileUploadUtil fileUploadUtil;
 
 
     @Override
@@ -46,6 +50,7 @@ public class TestSetServiceImpl implements TestSetService {
             testSetDto.setTesId(tem.getTesId());
             testSetDto.setQuestion(tem.getQuestion());
             testSetDto.setType(tem.getType());
+            testSetDto.setCId(tem.getChapter().getChaId());
             testSetDto.setAnswer(tem.getAnswer().trim().split("&"));
             if (tem.getImg_urls() != null && tem.getImg_urls().length() > 0)
                 testSetDto.setImg_urls(tem.getImg_urls().trim().split("&"));
@@ -66,6 +71,7 @@ public class TestSetServiceImpl implements TestSetService {
         testSetDto.setTesId(tem.getTesId());
         testSetDto.setQuestion(tem.getQuestion());
         testSetDto.setType(tem.getType());
+        testSetDto.setCId(tem.getChapter().getChaId());
         testSetDto.setAnswer(tem.getAnswer().trim().split("&"));
         if (tem.getImg_urls() != null && tem.getImg_urls().length() > 0)
             testSetDto.setImg_urls(tem.getImg_urls().trim().split("&"));
@@ -87,6 +93,7 @@ public class TestSetServiceImpl implements TestSetService {
             testSetDto.setTesId(tem.getTesId());
             testSetDto.setQuestion(tem.getQuestion());
             testSetDto.setType(tem.getType());
+            testSetDto.setCId(tem.getChapter().getChaId());
             testSetDto.setAnswer(tem.getAnswer().trim().split("&"));
             if (tem.getImg_urls() != null && tem.getImg_urls().length() > 0)
                 testSetDto.setImg_urls(tem.getImg_urls().trim().split("&"));
@@ -109,6 +116,7 @@ public class TestSetServiceImpl implements TestSetService {
             testSetDto.setTesId(tem.getTesId());
             testSetDto.setQuestion(tem.getQuestion());
             testSetDto.setType(tem.getType());
+            testSetDto.setCId(tem.getChapter().getChaId());
             testSetDto.setAnswer(tem.getAnswer().trim().split("&"));
             if (tem.getImg_urls() != null && tem.getImg_urls().length() > 0)
                 testSetDto.setImg_urls(tem.getImg_urls().trim().split("&"));
@@ -166,6 +174,7 @@ public class TestSetServiceImpl implements TestSetService {
             testSetDto.setTesId(tem.getTesId());
             testSetDto.setQuestion(tem.getQuestion());
             testSetDto.setType(tem.getType());
+            testSetDto.setCId(tem.getChapter().getChaId());
             testSetDto.setAnswer(tem.getAnswer().trim().split("&"));
             if (tem.getImg_urls() != null && tem.getImg_urls().length() > 0)
                 testSetDto.setImg_urls(tem.getImg_urls().trim().split("&"));
@@ -177,7 +186,7 @@ public class TestSetServiceImpl implements TestSetService {
     }
 
     @Override
-    public void add(TestSetVo testSet) {
+    public void add(TestSetVo testSet, MultipartFile file) {
         Chapter chapter = chapterDao.findByChaId(testSet.getCId());
         if (chapter == null) {
             throw new CustomizeRuntimeException(MyCustomizeErrorCode.NOT_FOND_CHAPTER);
@@ -185,7 +194,17 @@ public class TestSetServiceImpl implements TestSetService {
         if (testSet.getType() == 1 && testSet.getAnswer().contains("&")) {
             throw new CustomizeRuntimeException(MyCustomizeErrorCode.ONLY_HAVE_ANSWER);
         }
+
+
+
         TestSet newOne = new TestSet();
+        if(file!=null) {
+            //文件不为空
+            String fileName = fileUploadUtil.getNewFileName(file);
+            fileUploadUtil.uploadOneFile(file, "testImage/"+fileName);
+            fileName="/static/testImage/"+fileName;
+            newOne.setImg_urls(fileName);
+        }
         newOne.setType(testSet.getType());
         newOne.setQuestion(testSet.getQuestion());
         newOne.setAnswer(testSet.getAnswer());
@@ -194,13 +213,12 @@ public class TestSetServiceImpl implements TestSetService {
         if (testSet.getType() != 2) {
             newOne.setOptions(testSet.getOptions());
         }
-        if (testSet.getImg_urls() != null && testSet.getImg_urls().length() > 0)
-            newOne.setImg_urls(testSet.getImg_urls());
+
         testSetDao.saveAndFlush(newOne);
     }
 
     @Override
-    public void update(TestSetVo testSet) {
+    public void update(TestSetVo testSet, MultipartFile file) {
         TestSet tem = testSetDao.findByTesId(testSet.getTesId());
         if (tem == null) {
             throw new CustomizeRuntimeException(MyCustomizeErrorCode.NOT_FOND_TEST);
@@ -212,6 +230,15 @@ public class TestSetServiceImpl implements TestSetService {
         if (testSet.getType() == 1 && testSet.getAnswer().contains("&")) {
             throw new CustomizeRuntimeException(MyCustomizeErrorCode.ONLY_HAVE_ANSWER);
         }
+        if(file!=null) {
+            //文件不为空
+            if(tem.getImg_urls()!=null&&tem.getImg_urls().length()>0)fileUploadUtil.deletePhoto(tem.getImg_urls());
+
+            String fileName = fileUploadUtil.getNewFileName(file);
+            fileUploadUtil.uploadOneFile(file, "testImage/"+fileName);
+            fileName="/static/testImage/"+fileName;
+            tem.setImg_urls(fileName);
+        }
         tem.setType(testSet.getType());
         tem.setQuestion(testSet.getQuestion());
         tem.setAnswer(testSet.getAnswer());
@@ -220,7 +247,6 @@ public class TestSetServiceImpl implements TestSetService {
         if (testSet.getType() != 2) {
             tem.setOptions(testSet.getOptions());
         }
-        if (testSet.getImg_urls() != null && testSet.getImg_urls().length() > 0) tem.setImg_urls(testSet.getImg_urls());
         testSetDao.saveAndFlush(tem);
     }
 

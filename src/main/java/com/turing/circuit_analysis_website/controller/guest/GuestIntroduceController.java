@@ -45,14 +45,6 @@ public class GuestIntroduceController {
         Introduce introduce = introduceService.findById(id);
         return JsonResult.success().addObject("introduce", introduce);
     }
-
-    @ApiOperation(value = "查询老师简介信息", notes = "", httpMethod = "GET")
-    @GetMapping(value = "/getTeacherIntroduce")
-    public JsonResult getTeacherIntroduce() {
-        Introduce introduce = introduceService.getTeacherIntroduce();
-        return JsonResult.success().addObject("introduce", introduce);
-    }
-
     @ApiOperation(value = "查询课程简介信息", notes = "", httpMethod = "GET")
     @GetMapping(value = "/getCourseIntroduce")
     public JsonResult getCourseIntroduce() {
@@ -65,7 +57,8 @@ public class GuestIntroduceController {
             "3.knowledge:先修知识\n" +
             "4.list:公告\n" +
             "5.socialEvaluation:社会评价\n" +
-            "6.studentAssess:学生评价", httpMethod = "GET")
+            "6.studentAssess:学生评价\n"+
+            "7.history:历史历程", httpMethod = "GET")
     @GetMapping(value = "/findByType")
     public JsonResult findByType(String type) {
         List<Introduce> list = introduceService.findAllByType(type);

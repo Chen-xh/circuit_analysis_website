@@ -1,6 +1,7 @@
 package com.turing.circuit_analysis_website.controller.guest;
 
 
+import com.turing.circuit_analysis_website.pojo.User;
 import com.turing.circuit_analysis_website.vo.LoginVo;
 import com.turing.circuit_analysis_website.service.UserService;
 import com.turing.circuit_analysis_website.util.JWTToken;
@@ -34,9 +35,9 @@ public class LoginController {
 
     private static final Logger PLOG = LoggerFactory.getLogger(LoginController.class);
 
-    @ApiOperation(value = "用户登录接口",notes = "默认账号tes 123 ，角色是admin")
+    @ApiOperation(value = "用户登录接口", notes = "默认账号tes 123 ，角色是admin")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "username",value = "用户名", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "username", value = "用户名", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "password", value = "密码", required = true, paramType = "query", dataType = "String")
     })
     @PostMapping("login")
@@ -53,20 +54,24 @@ public class LoginController {
         return JsonResult.success().addObject("token", token.getPrincipal());
 
     }
-    @ApiOperation(value = "管理员登录接口",notes = "默认账号test 123 ，角色是admin")
+
+    @ApiOperation(value = "管理员登录接口", notes = "默认账号test 123 ，角色是admin")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "username",value = "用户名", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "username", value = "用户名", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "password", value = "密码", required = true, paramType = "query", dataType = "String")
     })
     @PostMapping("adminLogin")
-    public JsonResult adminLogin(String username,String password) {
+    public JsonResult adminLogin(String username, String password) {
         String passwords = MD5Util.getHexPassword(password);
         System.out.println(passwords);
         JWTToken token = new JWTToken(JWTUtil.sign(username, passwords));
         Subject subject = SecurityUtils.getSubject();
         //登录认证
         subject.login(token);
-
+        User user=userService.getUserByUserName(username);
+        if(!user.getRoles().get(0).getRoleName().equals("admin")){
+            return JsonResult.fail();
+        }
         PLOG.info("LoginController >> login · 获取Token");
 
         return JsonResult.success().addObject("token", token.getPrincipal());
@@ -75,20 +80,21 @@ public class LoginController {
 
     @ApiOperation(value = "用户注册接口")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "username",value = "用户名", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "username", value = "用户名", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "password", value = "密码", required = true, paramType = "query", dataType = "String"),
-            @ApiImplicitParam(name = "college",value = "学院", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "college", value = "学院", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "gender", value = "性别", required = true, paramType = "query", dataType = "String"),
-            @ApiImplicitParam(name = "user_class",value = "班级", required = true, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "user_class", value = "班级", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "name", value = "姓名", required = true, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "major", value = "专业", required = true, paramType = "query", dataType = "String")
     })
     @PostMapping("register")
     public JsonResult userRegister(@Valid UserVo userVo) {
-        userService.add(userVo,  2L);
+        userService.add(userVo, 2L);
         return JsonResult.success();
 
     }
+
     @ApiOperation(value = "用户退出接口")
     @PostMapping("logout")
     public JsonResult logout() {

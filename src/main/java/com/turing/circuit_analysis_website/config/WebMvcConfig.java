@@ -23,6 +23,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
 
         registry.addResourceHandler("/static/**").addResourceLocations("file:"+fileUrl);
+        registry.addResourceHandler("/adminSystem/**").addResourceLocations("file:"+fileUrl);
 
     }
 }

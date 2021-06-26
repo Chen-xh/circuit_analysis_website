@@ -55,12 +55,12 @@ public class ShiroConfig {
         // 开放登录、未登录等映射/ign/login
         filterChainDefinitionMap.put("/guest/**", "anon");
         filterChainDefinitionMap.put("/login", "anon");
+        filterChainDefinitionMap.put("/adminLogin", "anon");
         filterChainDefinitionMap.put("/error/**", "anon");
         filterChainDefinitionMap.put("/static/**", "anon");
         // 拦截接口
 //        filterChainDefinitionMap.put("/admin/user/**", "jwt,Roles[admin,student]");这个必须同时admin和student才能访问
 //        filterChainDefinitionMap.put("/admin/user/**", "jwt,anyRole[admin,student]");
-//        filterChainDefinitionMap.put("/admin/user/**", "jwt,anyRole[admin]");
         filterChainDefinitionMap.put("/admin/**", "jwt");
 
 
